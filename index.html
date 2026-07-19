@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="NutriQuest - 게임형 식습관 관리 RPG">
+  <title>NutriQuest | 식습관 RPG</title>
+
+  <!-- Font Awesome 아이콘 -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+  <!-- Google Fonts - 게임 UI 느낌의 둥근 폰트 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ===== 로그인 화면 ===== -->
+  <div class="login-screen" id="loginScreen">
+    <div class="login-bg-decoration">
+      <div class="bg-circle bg-circle--1"></div>
+      <div class="bg-circle bg-circle--2"></div>
+      <div class="bg-circle bg-circle--3"></div>
+    </div>
+
+    <div class="login-card glass fade-in">
+      <div class="login-logo">
+        <i class="fa-solid fa-leaf login-logo__icon"></i>
+        <h1 class="login-logo__title">NutriQuest</h1>
+        <p class="login-logo__subtitle">식습관 관리 RPG에 오신 것을 환영해요!</p>
+      </div>
+
+      <div class="login-tabs">
+        <button class="login-tab active ripple" data-form="login" type="button">로그인</button>
+        <button class="login-tab ripple" data-form="signup" type="button">회원가입</button>
+      </div>
+
+      <!-- 로그인 폼 -->
+      <form class="login-form active" id="loginForm" novalidate>
+        <div class="login-field">
+          <label for="loginUsername"><i class="fa-solid fa-user"></i> 아이디</label>
+          <input type="text" id="loginUsername" class="input-field" placeholder="아이디를 입력하세요" autocomplete="username">
+        </div>
+        <div class="login-field">
+          <label for="loginPassword"><i class="fa-solid fa-lock"></i> 비밀번호</label>
+          <input type="password" id="loginPassword" class="input-field" placeholder="비밀번호를 입력하세요" autocomplete="current-password">
+        </div>
+        <label class="login-remember">
+          <input type="checkbox" id="rememberMe">
+          <span class="login-remember__box"><i class="fa-solid fa-check"></i></span>
+          로그인 상태 유지
+        </label>
+        <p class="login-error" id="loginError"></p>
+        <button type="submit" class="btn btn--primary login-submit ripple">
+          <i class="fa-solid fa-right-to-bracket"></i> 로그인
+        </button>
+        <button type="button" class="btn btn--secondary login-guest ripple" id="guestLoginBtn">
+          <i class="fa-solid fa-user-secret"></i> 게스트로 시작하기
+        </button>
+      </form>
+
+      <!-- 회원가입 폼 -->
+      <form class="login-form" id="signupForm" novalidate>
+        <div class="login-field">
+          <label for="signupUsername"><i class="fa-solid fa-user"></i> 아이디</label>
+          <input type="text" id="signupUsername" class="input-field" placeholder="사용할 아이디" autocomplete="username">
+        </div>
+        <div class="login-field">
+          <label for="signupNickname"><i class="fa-solid fa-egg"></i> 닉네임</label>
+          <input type="text" id="signupNickname" class="input-field" placeholder="게임에서 사용할 닉네임" maxlength="12">
+        </div>
+        <div class="login-field">
+          <label for="signupPassword"><i class="fa-solid fa-lock"></i> 비밀번호</label>
+          <input type="password" id="signupPassword" class="input-field" placeholder="비밀번호 (4자 이상)" autocomplete="new-password">
+        </div>
+        <div class="login-field">
+          <label for="signupPasswordConfirm"><i class="fa-solid fa-lock"></i> 비밀번호 확인</label>
+          <input type="password" id="signupPasswordConfirm" class="input-field" placeholder="비밀번호 재입력" autocomplete="new-password">
+        </div>
+        <p class="login-error" id="signupError"></p>
+        <button type="submit" class="btn btn--primary login-submit ripple">
+          <i class="fa-solid fa-user-plus"></i> 회원가입하고 시작하기
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== 앱 콘텐츠 (로그인 후 표시) ===== -->
+  <div id="appRoot" class="app-hidden">
+
+  <!-- ===== 배경 장식 ===== -->
+  <div class="bg-decoration">
+    <div class="bg-circle bg-circle--1"></div>
+    <div class="bg-circle bg-circle--2"></div>
+    <div class="bg-circle bg-circle--3"></div>
+  </div>
+
+  <!-- ===== 상단 헤더 ===== -->
+  <header class="header glass">
+    <div class="header__left">
+      <div class="logo">
+        <i class="fa-solid fa-leaf logo__icon"></i>
+        <span class="logo__text">NutriQuest</span>
+      </div>
+    </div>
+
+    <div class="header__center">
+      <div class="level-badge">
+        <i class="fa-solid fa-star"></i>
+        <span id="headerLevel">Lv.1</span>
+      </div>
+      <div class="xp-bar">
+        <div class="xp-bar__fill" id="xpBarFill"></div>
+        <span class="xp-bar__text" id="xpBarText">0 / 100 EXP</span>
+      </div>
+    </div>
+
+    <div class="header__right">
+      <div class="coin-display">
+        <i class="fa-solid fa-coins"></i>
+        <span id="coinCount">0</span>
+      </div>
+      <button class="icon-btn ripple" id="settingsBtn" aria-label="설정">
+        <i class="fa-solid fa-gear"></i>
+      </button>
+    </div>
+  </header>
+
+  <!-- ===== 메인 콘텐츠 영역 ===== -->
+  <main class="main-content">
+
+    <!-- ---------- 홈 탭 ---------- -->
+    <section class="tab-panel active" id="tab-home">
+
+      <!-- 캐릭터 영역 -->
+      <div class="character-section glass card fade-in">
+        <div class="character-stage" id="characterStage">
+          <!-- 진화 단계별 캐릭터 (JS에서 active 클래스 토글) -->
+          <div class="character character--chick active" data-stage="chick">
+            <div class="char-body">
+              <div class="char-head">
+                <div class="char-eye char-eye--left"></div>
+                <div class="char-eye char-eye--right"></div>
+                <div class="char-beak"></div>
+                <div class="char-blush char-blush--left"></div>
+                <div class="char-blush char-blush--right"></div>
+              </div>
+              <div class="char-wing char-wing--left"></div>
+              <div class="char-wing char-wing--right"></div>
+              <div class="char-feet">
+                <div class="char-foot"></div>
+                <div class="char-foot"></div>
+              </div>
+            </div>
+            <div class="char-shadow"></div>
+          </div>
+
+          <div class="character character--bird" data-stage="bird">
+            <div class="char-body char-body--bird">
+              <div class="char-head char-head--bird">
+                <div class="char-eye char-eye--left"></div>
+                <div class="char-eye char-eye--right"></div>
+                <div class="char-beak char-beak--bird"></div>
+                <div class="char-crest"></div>
+              </div>
+              <div class="char-wing char-wing--left char-wing--bird"></div>
+              <div class="char-wing char-wing--right char-wing--bird"></div>
+              <div class="char-tail"></div>
+            </div>
+            <div class="char-shadow"></div>
+          </div>
+
+          <div class="character character--eagle" data-stage="eagle">
+            <div class="char-body char-body--eagle">
+              <div class="char-head char-head--eagle">
+                <div class="char-eye char-eye--eagle char-eye--left"></div>
+                <div class="char-eye char-eye--eagle char-eye--right"></div>
+                <div class="char-beak char-beak--eagle"></div>
+              </div>
+              <div class="char-wing char-wing--left char-wing--eagle"></div>
+              <div class="char-wing char-wing--right char-wing--eagle"></div>
+            </div>
+            <div class="char-shadow char-shadow--large"></div>
+          </div>
+
+          <div class="character character--mythical" data-stage="mythical">
+            <div class="char-body char-body--mythical">
+              <div class="char-aura"></div>
+              <div class="char-head char-head--mythical">
+                <div class="char-eye char-eye--mythical char-eye--left"></div>
+                <div class="char-eye char-eye--mythical char-eye--right"></div>
+                <div class="char-beak char-beak--mythical"></div>
+                <div class="char-crown"></div>
+              </div>
+              <div class="char-wing char-wing--left char-wing--mythical"></div>
+              <div class="char-wing char-wing--right char-wing--mythical"></div>
+              <div class="char-sparkle char-sparkle--1"></div>
+              <div class="char-sparkle char-sparkle--2"></div>
+              <div class="char-sparkle char-sparkle--3"></div>
+            </div>
+            <div class="char-shadow char-shadow--large"></div>
+          </div>
+        </div>
+
+        <div class="character-info">
+          <h2 class="character-info__level" id="charLevel">Lv.1</h2>
+          <p class="character-info__exp" id="charExp">EXP 0 / 100</p>
+          <p class="character-info__status" id="charStatus">
+            <i class="fa-solid fa-face-smile"></i> 기분 좋음
+          </p>
+        </div>
+      </div>
+
+      <!-- 스탯 영역 -->
+      <div class="stats-section glass card fade-in">
+        <h3 class="section-title">
+          <i class="fa-solid fa-chart-simple"></i> 현재 스탯
+        </h3>
+        <div class="stat-list">
+          <div class="stat-item">
+            <div class="stat-item__header">
+              <span><i class="fa-solid fa-heart stat-icon stat-icon--health"></i> 체력</span>
+              <span class="stat-value" id="statHealth">50</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--health" id="barHealth"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__header">
+              <span><i class="fa-solid fa-brain stat-icon stat-icon--focus"></i> 집중력</span>
+              <span class="stat-value" id="statFocus">50</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--focus" id="barFocus"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__header">
+              <span><i class="fa-solid fa-dumbbell stat-icon stat-icon--strength"></i> 근력</span>
+              <span class="stat-value" id="statStrength">50</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--strength" id="barStrength"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__header">
+              <span><i class="fa-solid fa-shield-heart stat-icon stat-icon--immunity"></i> 면역력</span>
+              <span class="stat-value" id="statImmunity">50</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--immunity" id="barImmunity"></div></div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-item__header">
+              <span><i class="fa-solid fa-face-smile stat-icon stat-icon--happiness"></i> 행복</span>
+              <span class="stat-value" id="statHappiness">50</span>
+            </div>
+            <div class="progress-bar"><div class="progress-bar__fill progress-bar__fill--happiness" id="barHappiness"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 오늘의 식사 요약 -->
+      <div class="meals-summary glass card fade-in">
+        <h3 class="section-title">
+          <i class="fa-solid fa-utensils"></i> 오늘의 식사 기록
+        </h3>
+        <div class="meal-buttons">
+          <button class="meal-btn ripple" data-meal="breakfast">
+            <i class="fa-solid fa-sun"></i>
+            <span>아침</span>
+            <small class="meal-btn__status" id="mealStatus-breakfast">미기록</small>
+          </button>
+          <button class="meal-btn ripple" data-meal="lunch">
+            <i class="fa-solid fa-cloud-sun"></i>
+            <span>점심</span>
+            <small class="meal-btn__status" id="mealStatus-lunch">미기록</small>
+          </button>
+          <button class="meal-btn ripple" data-meal="dinner">
+            <i class="fa-solid fa-moon"></i>
+            <span>저녁</span>
+            <small class="meal-btn__status" id="mealStatus-dinner">미기록</small>
+          </button>
+          <button class="meal-btn ripple" data-meal="snack">
+            <i class="fa-solid fa-cookie-bite"></i>
+            <span>간식</span>
+            <small class="meal-btn__status" id="mealStatus-snack">미기록</small>
+          </button>
+        </div>
+      </div>
+
+      <!-- 주간 보스 -->
+      <div class="boss-section glass card fade-in">
+        <h3 class="section-title">
+          <i class="fa-solid fa-dragon"></i> 이번 주 보스
+        </h3>
+        <div class="boss-card" id="bossCard">
+          <div class="boss-card__icon" id="bossIcon">👾</div>
+          <div class="boss-card__info">
+            <h4 id="bossName">비만 몬스터</h4>
+            <p id="bossDesc">이번 주 미션 5개 이상 완료하면 처치!</p>
+            <div class="progress-bar progress-bar--boss">
+              <div class="progress-bar__fill progress-bar__fill--boss" id="bossProgress"></div>
+            </div>
+            <span class="boss-progress-text" id="bossProgressText">0 / 5 미션</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 건강 달력 -->
+      <div class="calendar-section glass card fade-in">
+        <h3 class="section-title">
+          <i class="fa-solid fa-calendar-days"></i> 건강 달력
+        </h3>
+        <div class="calendar-nav">
+          <button class="icon-btn ripple" id="calPrev"><i class="fa-solid fa-chevron-left"></i></button>
+          <span id="calMonthYear">2026년 7월</span>
+          <button class="icon-btn ripple" id="calNext"><i class="fa-solid fa-chevron-right"></i></button>
+        </div>
+        <div class="calendar-legend">
+          <span><span class="legend-dot legend-dot--good"></span> 건강</span>
+          <span><span class="legend-dot legend-dot--normal"></span> 보통</span>
+          <span><span class="legend-dot legend-dot--bad"></span> 나쁨</span>
+        </div>
+        <div class="calendar-grid" id="calendarGrid"></div>
+      </div>
+    </section>
+
+    <!-- ---------- 식사기록 탭 ---------- -->
+    <section class="tab-panel" id="tab-meals">
+      <div class="page-header glass card fade-in">
+        <h2><i class="fa-solid fa-book-open"></i> 식사 기록</h2>
+        <p>오늘 먹은 음식을 기록하고 캐릭터를 성장시키세요!</p>
+      </div>
+
+      <div class="meal-log-list" id="mealLogList">
+        <!-- JS에서 동적 생성 -->
+      </div>
+
+      <div class="nutrition-panel glass card fade-in">
+        <h3 class="section-title"><i class="fa-solid fa-flask"></i> 오늘의 영양 분석</h3>
+        <div class="nutrition-grid" id="nutritionGrid">
+          <div class="nutrition-item nutrition-item--good">
+            <span>단백질</span><strong id="nutProtein">0</strong>
+          </div>
+          <div class="nutrition-item nutrition-item--good">
+            <span>비타민</span><strong id="nutVitamin">0</strong>
+          </div>
+          <div class="nutrition-item nutrition-item--good">
+            <span>칼슘</span><strong id="nutCalcium">0</strong>
+          </div>
+          <div class="nutrition-item nutrition-item--good">
+            <span>식이섬유</span><strong id="nutFiber">0</strong>
+          </div>
+          <div class="nutrition-item nutrition-item--bad">
+            <span>나트륨</span><strong id="nutSodium">0</strong>
+          </div>
+          <div class="nutrition-item nutrition-item--bad">
+            <span>당류</span><strong id="nutSugar">0</strong>
+          </div>
+          <div class="nutrition-item nutrition-item--bad">
+            <span>지방</span><strong id="nutFat">0</strong>
+          </div>
+        </div>
+        <div class="health-score" id="healthScore">
+          <span class="health-score__label">오늘 건강 점수</span>
+          <span class="health-score__value" id="healthScoreValue">-</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ---------- 미션 탭 ---------- -->
+    <section class="tab-panel" id="tab-missions">
+      <div class="page-header glass card fade-in">
+        <h2><i class="fa-solid fa-flag"></i> 오늘의 미션</h2>
+        <p>미션을 완료하고 코인과 경험치를 받으세요!</p>
+      </div>
+      <div class="mission-list" id="missionList">
+        <!-- JS에서 동적 생성 -->
+      </div>
+    </section>
+
+    <!-- ---------- 인벤토리 탭 ---------- -->
+    <section class="tab-panel" id="tab-inventory">
+      <div class="page-header glass card fade-in">
+        <h2><i class="fa-solid fa-box-open"></i> 인벤토리</h2>
+        <p>획득한 배지, 칭호, 스킨을 확인하세요!</p>
+      </div>
+
+      <div class="inventory-tabs">
+        <button class="inv-tab active ripple" data-inv="badges">배지</button>
+        <button class="inv-tab ripple" data-inv="titles">칭호</button>
+        <button class="inv-tab ripple" data-inv="skins">스킨</button>
+      </div>
+
+      <div class="inventory-content active" id="inv-badges">
+        <div class="badge-grid" id="badgeGrid"></div>
+      </div>
+      <div class="inventory-content" id="inv-titles">
+        <div class="title-list" id="titleList"></div>
+      </div>
+      <div class="inventory-content" id="inv-skins">
+        <div class="skin-grid" id="skinGrid"></div>
+      </div>
+    </section>
+
+    <!-- ---------- 랭킹 탭 ---------- -->
+    <section class="tab-panel" id="tab-ranking">
+      <div class="page-header glass card fade-in">
+        <h2><i class="fa-solid fa-trophy"></i> 랭킹</h2>
+        <p>다른 NutriQuest 유저들과 경쟁하세요!</p>
+      </div>
+      <div class="ranking-list" id="rankingList">
+        <!-- JS에서 동적 생성 -->
+      </div>
+      <div class="my-rank glass card" id="myRank">
+        <span class="my-rank__position" id="myRankPosition">#-</span>
+        <span class="my-rank__name">나</span>
+        <span class="my-rank__level" id="myRankLevel">Lv.1</span>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===== 하단 네비게이션 ===== -->
+  <nav class="bottom-nav glass">
+    <button class="nav-item active ripple" data-tab="home">
+      <i class="fa-solid fa-house"></i>
+      <span>홈</span>
+    </button>
+    <button class="nav-item ripple" data-tab="meals">
+      <i class="fa-solid fa-utensils"></i>
+      <span>식사기록</span>
+    </button>
+    <button class="nav-item ripple" data-tab="missions">
+      <i class="fa-solid fa-flag"></i>
+      <span>미션</span>
+    </button>
+    <button class="nav-item ripple" data-tab="inventory">
+      <i class="fa-solid fa-box-open"></i>
+      <span>인벤토리</span>
+    </button>
+    <button class="nav-item ripple" data-tab="ranking">
+      <i class="fa-solid fa-trophy"></i>
+      <span>랭킹</span>
+    </button>
+  </nav>
+
+  <!-- ===== 식사 기록 모달 ===== -->
+  <div class="modal-overlay" id="mealModal">
+    <div class="modal glass">
+      <div class="modal__header">
+        <h3 id="mealModalTitle"><i class="fa-solid fa-utensils"></i> 아침 식사</h3>
+        <button class="modal__close ripple" id="mealModalClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal__body">
+        <p class="modal__desc">먹은 음식을 선택하세요 (복수 선택 가능)</p>
+        <div class="food-checklist" id="foodChecklist">
+          <!-- JS에서 카테고리별로 동적 생성 -->
+        </div>
+
+        <div class="custom-food-input">
+          <label class="custom-food-input__label" for="customFoodInput">
+            <i class="fa-solid fa-wand-magic-sparkles"></i> 목록에 없는 음식 직접 입력
+          </label>
+          <div class="custom-food-input__row">
+            <input type="text" id="customFoodInput" class="input-field" placeholder="예: 삼겹살, 아이스아메리카노 등" maxlength="20">
+            <button type="button" class="btn btn--primary custom-food-input__btn ripple" id="customFoodAddBtn">
+              <i class="fa-solid fa-wand-magic-sparkles"></i> AI 감지
+            </button>
+          </div>
+          <p class="custom-food-input__hint" id="customFoodHint">직접 먹은 음식을 입력하면 AI가 카테고리와 영양성분을 자동으로 분석해요!</p>
+        </div>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--secondary ripple" id="mealModalCancel">취소</button>
+        <button class="btn btn--primary ripple" id="mealModalSave">
+          <i class="fa-solid fa-check"></i> 기록하기
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 설정 모달 ===== -->
+  <div class="modal-overlay" id="settingsModal">
+    <div class="modal glass">
+      <div class="modal__header">
+        <h3><i class="fa-solid fa-gear"></i> 설정</h3>
+        <button class="modal__close ripple" id="settingsModalClose"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal__body">
+        <div class="settings-item">
+          <label>닉네임</label>
+          <input type="text" id="nicknameInput" class="input-field" placeholder="닉네임 입력" maxlength="12">
+        </div>
+        <div class="settings-item">
+          <label>알림음</label>
+          <label class="toggle">
+            <input type="checkbox" id="soundToggle" checked>
+            <span class="toggle__slider"></span>
+          </label>
+        </div>
+        <div class="settings-item settings-item--danger">
+          <button class="btn btn--secondary ripple" id="logoutBtn">
+            <i class="fa-solid fa-right-from-bracket"></i> 로그아웃
+          </button>
+        </div>
+        <div class="settings-item settings-item--danger">
+          <button class="btn btn--danger ripple" id="resetDataBtn">
+            <i class="fa-solid fa-trash"></i> 데이터 초기화
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 레벨업 모달 ===== -->
+  <div class="modal-overlay" id="levelUpModal">
+    <div class="modal modal--celebration glass">
+      <div class="celebration-particles" id="celebrationParticles"></div>
+      <div class="modal__body modal__body--center">
+        <div class="level-up-icon"><i class="fa-solid fa-star"></i></div>
+        <h2>레벨 업!</h2>
+        <p class="level-up-text" id="levelUpText">Lv.2 달성!</p>
+        <p class="evolution-text" id="evolutionText"></p>
+      </div>
+      <div class="modal__footer">
+        <button class="btn btn--primary ripple" id="levelUpClose">확인</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== 업적 달성 토스트 ===== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- ===== 영양 분석 결과 오버레이 ===== -->
+  <div class="analysis-overlay" id="analysisOverlay">
+    <div class="analysis-result glass" id="analysisResult">
+      <div class="analysis-character" id="analysisCharacter"></div>
+      <p class="analysis-message" id="analysisMessage">훌륭한 식단이에요!</p>
+    </div>
+  </div>
+
+  </div>
+  <!-- ===== /appRoot ===== -->
+
+  <script src="script.js"></script>
+</body>
+</html>
